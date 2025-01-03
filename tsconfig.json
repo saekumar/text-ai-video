@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "app/dashboard/interview/[interviewId]/feedback/page.jsx",
+    "components/features.jsx",
+    "components/hero.jsx",
+    "components/howItWorks.jsx",
+    "components/newsLetter.jsx",
+    "components/testimonials.jsx",
+    "components/pricing.jsx",
+    "components/ui/marquee.jsx",
+    "components/ui/section-badge.jsx",
+    "components/ui/lamp.jsx",
+    "components/ui/border-beam.jsx",
+    "components/navigation/navbar.jsx",
+    "components/navigation/footer.jsx",
+    "components/global/container.jsx",
+    "components/global/icons.jsx",
+    "components/global/wrapper.jsx"
+  ],
+  "exclude": ["node_modules"]
+}
