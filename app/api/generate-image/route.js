@@ -9,6 +9,7 @@ export async function POST(req) {
   try {
     const body = await req.json()
     const { prompt } = body
+    console.log(prompt)
 
     if (!prompt) {
       return new Response(JSON.stringify({ error: 'Prompt is required' }), {
@@ -31,10 +32,11 @@ export async function POST(req) {
         }
       },
     })
+    console.log(result)
     if (result?.data?.images?.length > 0) {
       const imageUrl = result.data.images[0].url
 
-      const cloudinaryImageUrl = await uploadImageToCloudinary(videoUrl)
+      const cloudinaryImageUrl = await uploadImageToCloudinary(imageUrl)
 
       return new Response(
         JSON.stringify({
