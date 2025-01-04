@@ -28,6 +28,7 @@ import {
   Sparkles,
   SquareTerminal,
   Trash2,
+  Video,
 } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -80,15 +81,15 @@ const menuOptions = [
   },
   {
     id: 2,
-    name: 'Create-new Short',
+    name: 'Create Short',
     path: '/dashboard/create-new',
     icon: FileVideo2Icon,
   },
   {
     id: 4,
-    name: 'Create-new Video',
+    name: 'Create Video',
     path: '/dashboard/video',
-    icon: CircleUser,
+    icon: Video,
   },
 ]
 
@@ -153,8 +154,10 @@ const SidebarComponent = (props) => {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
           </div>
-          <Input placeholder="Search here..." className="w-80" />
-          <UserButton />
+          {/* <Input placeholder="Search here..." className="w-80" /> */}
+          <div className="mr-10">
+            <UserButton />
+          </div>
         </header>
         <div className="md:ml-32 p-6">{props.children}</div>
       </SidebarInset>
