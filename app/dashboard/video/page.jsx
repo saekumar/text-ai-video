@@ -1,75 +1,103 @@
-import { uploadVideoToCloudinary } from '@/lib/cloudinaryConfig'
-import { fal } from '@fal-ai/client'
+'use client'
 
-export async function POST(req) {
-  try {
-    const body = await req.json()
-    const { prompt } = body
+import React, { useContext, useEffect, useState } from 'react'
 
-    if (!prompt) {
-      return new Response(JSON.stringify({ error: 'Prompt is required' }), {
-        status: 400,
-      })
-    }
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
-    const start = Date.now()
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 9500) // 9.5 seconds
+import { Label } from '@/components/ui/label'
 
+import { Textarea } from '@/components/ui/textarea'
+import axios from 'axios'
+
+const VideoPage = () => {
+  const [prompt, setPrompt] = useState('')
+  const [videoData, setVideoData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     try {
-      const result = await fal.subscribe(
-        'fal-ai/ltx-video',
-        {
-          input: {
-            prompt,
-            negative_prompt:
-              'low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly',
-            num_inference_steps: 30,
-            guidance_scale: 3,
-          },
-          logs: true,
-        },
-        { signal: controller.signal }
-      )
-      clearTimeout(timeout)
-      console.log('fal.subscribe response time:', Date.now() - start, 'ms')
+      setLoading(true)
+      console.log(prompt)
+      const response = await axios.post('/api/generate-fal-video', {
+        prompt: prompt,
+      })
 
-      if (result?.data?.video?.url?.length > 0) {
-        const videoUrl = result.data.video.url
-        const cloudinaryVideoUrl = await uploadVideoToCloudinary(videoUrl)
-
-        return new Response(JSON.stringify({ videoUrl: cloudinaryVideoUrl }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      } else {
-        return new Response(
-          JSON.stringify({
-            error: 'Video generation failed or no video returned',
-          }),
-          { status: 500 }
-        )
+      console.log(response)
+      console.log(response.data)
+      if (response.status === 200) {
+        setVideoData(response.data.videoUrl)
+        setLoading(false)
+        setPrompt('')
+        saveVideoToDb(response.data.videoUrl)
       }
-    } catch (err) {
-      clearTimeout(timeout)
-      if (err.name === 'AbortError') {
-        console.error('fal.subscribe request timed out')
-        return new Response(JSON.stringify({ error: 'Request timed out' }), {
-          status: 504,
-        })
-      }
-      throw err
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      setPrompt('')
     }
-  } catch (error) {
-    console.error(
-      'Error occurred:',
-      error.message,
-      error.stack,
-      error.response?.data
-    )
-    return new Response(
-      JSON.stringify({ error: error.message || 'An unknown error occurred' }),
-      { status: 500 }
-    )
   }
+  const saveVideoToDb = async (videoUrl) => {
+    try {
+      let res = await axios.post('/api/save-fal-video-to-db', {
+        videoUrl: videoUrl,
+        prompt: prompt,
+      })
+      console.log(res)
+      console.log(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  return (
+    <div className="md:px-20 flex flex-col ml-9 gap-6">
+      <h2 className="font-bold text-4xl text-gray-50 text-center">
+        Create new
+      </h2>
+      <Card className="">
+        <CardHeader>
+          <CardTitle>Generate new video</CardTitle>
+          <CardDescription>Generate new video in one click.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="grid w-full items-center gap-7">
+              {/* Content */}
+              <div className="flex flex-col space-y-4">
+                <Label
+                  htmlFor="content"
+                  className="text-2xl font-medium text-gray-100"
+                >
+                  Prompt
+                </Label>
+
+                <Textarea
+                  placeholder="Type your Prompt..."
+                  className="mt-4 p-3 text-[18px]"
+                  onChange={(e) => setPrompt(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Submit */}
+            <CardFooter className="flex justify-between mt-6">
+              <Button type="submit" disabled={loading}>
+                Generate
+              </Button>
+            </CardFooter>
+          </form>
+        </CardContent>
+      </Card>
+      {videoData && <video controls src={videoData} className="w-full" />}
+    </div>
+  )
 }
+
+export default VideoPage
