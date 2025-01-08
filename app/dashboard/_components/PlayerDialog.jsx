@@ -46,7 +46,7 @@ const PlayerDialog = ({ playVideo, videoId }) => {
         {resVideoData ? (
           <Player
             component={RemotionVideoComponent}
-            durationInFrames={Number(Math.round(durationInFrame.toFixed(0)))}
+            durationInFrames={Number(Math.ceil(durationInFrame.toFixed(3)))}
             compositionWidth={300}
             compositionHeight={450}
             fps={30}

@@ -3,6 +3,7 @@ import db from '../../../lib/prisma'
 import React, { useContext, useEffect, useState } from 'react'
 import LoadingComponent from './_components/customLoading'
 import { Button } from '@/components/ui/button'
+import { MultiStepLoader as Loader } from '../../../components/ui/multi-step-loader'
 import {
   Card,
   CardContent,
@@ -31,6 +32,32 @@ import { useUser } from '@clerk/nextjs'
 const contentOptions = ['Custom Prompt', 'Scary Tale', 'Jungle Book']
 const styleOptions = ['Realistic', 'Cartoon', 'Comic', 'Water Color']
 
+const loadingStates = [
+  {
+    text: 'Buying a condo',
+  },
+  {
+    text: 'Travelling in a flight',
+  },
+  {
+    text: 'Meeting Tyler Durden',
+  },
+  {
+    text: 'He makes soap',
+  },
+  {
+    text: 'We goto a bar',
+  },
+  {
+    text: 'Start a fight',
+  },
+  {
+    text: 'We like it',
+  },
+  {
+    text: 'Welcome to F**** C***',
+  },
+]
 const CreateNew = () => {
   const { user } = useUser()
   const userId = user?.id
@@ -112,7 +139,9 @@ const CreateNew = () => {
 
       if (response.status !== 200) {
         throw new Error('Failed to save video data.')
+        setLoading(false)
       }
+      setLoading(false)
 
       console.log('Saved video data:', response.data.savedVideoData)
       setVideoId(response.data.savedVideoData.id)
@@ -132,6 +161,7 @@ const CreateNew = () => {
   }
 
   const handleContentChange = (value) => {
+    console.log(value)
     setFormData((prev) => ({
       ...prev,
       content: value,
@@ -154,6 +184,7 @@ const CreateNew = () => {
   }
 
   const handleCustomPromptChange = (event) => {
+    console.log(event.target.value)
     setFormData((prev) => ({
       ...prev,
       customPrompt: event.target.value,
@@ -167,10 +198,10 @@ const CreateNew = () => {
       toast.error('User not authenticated.')
       return
     }
-
+    console.log('okay')
+    console.log(event)
     setLoading(true)
     await GetVideoScript(formData)
-    setLoading(false)
 
     setFormData({
       customPrompt: '',
@@ -181,16 +212,39 @@ const CreateNew = () => {
   }
 
   const GetVideoScript = async (formData) => {
+    console.log(formData)
     let content =
-      formData.content === '' ? formData.customPrompt : formData.content
-    const prompt =
-      'Create a script to generate a ' +
-      formData.duration +
-      '-second video on the topic of an ' +
-      content +
-      '. Provide a JSON response with two fields: imagePrompt for detailed, ' +
-      formData.style +
-      " AI-generated image descriptions corresponding to each scene, and contentText for the scene's narrative content."
+      formData.content === 'Custom Prompt'
+        ? formData.customPrompt
+        : formData.content
+    console.log(content)
+
+    const prompt = `
+    Create a detailed script for a ${formData.duration}-second video on the topic of an "${content}". 
+    The script should include:
+    - A JSON response with two fields: 
+      1. "imagePrompt" for detailed, ${formData.style} AI-generated image descriptions corresponding to each scene.
+      2. "contentText" for the narrative content for each scene.
+    - Ensure the script has enough scenes to fully utilize the ${formData.duration} seconds, 
+      with a balanced pacing that fits the duration. 
+    - Each scene should be concise yet informative, and the script should provide content 
+      that ensures smooth transitions between scenes.
+
+    Example format:
+    {
+      "scenes": [
+        {
+          "imagePrompt": "Description of scene 1",
+          "contentText": "Narrative content for scene 1"
+        },
+        {
+          "imagePrompt": "Description of scene 2",
+          "contentText": "Narrative content for scene 2"
+        },
+        ...
+      ]
+    }
+  `
 
     console.log('Prompt:', prompt)
 
@@ -228,6 +282,7 @@ const CreateNew = () => {
       }
 
       const response = await axios.post('/api/generate-audio', { script })
+      console.log(response)
 
       if (response.data.status === 200) {
         setAudioUrl(response.data.url)
@@ -244,6 +299,7 @@ const CreateNew = () => {
   const generateTranscript = async (audioUrl) => {
     try {
       let res = await axios.post('/api/generate-caption', { audioUrl })
+      console.log(res)
 
       if (res.status === 200) {
         setCaptions(res.data.words)
@@ -418,7 +474,9 @@ const CreateNew = () => {
         </CardContent>
       </Card>
 
+      {/* <Loader loadingStates={loadingStates} loading={loading} duration={2000} /> */}
       {loading && <LoadingComponent loading={loading} />}
+
       {playVideo && <PlayerDialog playVideo={playVideo} videoId={videoId} />}
     </div>
   )

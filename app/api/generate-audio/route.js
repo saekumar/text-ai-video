@@ -28,7 +28,7 @@ export async function POST(req) {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'api-key': 'ap2_54e20177-cd0d-410b-b09e-5967cbd2e6c6', // Replace with environment variable for security
+        'api-key': 'ap2_280fa656-f0e9-474d-9afd-4083a1f76623', // Replace with environment variable for security
       },
       data: data,
     }
