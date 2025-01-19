@@ -30,7 +30,7 @@ import { VideoDataContext } from '@/app/_context/videoDataContext'
 import { useUser } from '@clerk/nextjs'
 
 const contentOptions = ['Custom Prompt', 'Scary Tale', 'Jungle Book']
-const styleOptions = ['Realistic', 'Cartoon', 'Comic', 'Water Color']
+const styleOptions = ['Realistic', 'Cartoon', 'Water Color']
 
 const loadingStates = [
   {
@@ -66,10 +66,8 @@ const CreateNew = () => {
 
   const { videoData, updateVideoData } = useContext(VideoDataContext)
   const [formData, setFormData] = useState({
-    content: '',
     customPrompt: '',
     style: '',
-    duration: '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -213,19 +211,17 @@ const CreateNew = () => {
 
   const GetVideoScript = async (formData) => {
     console.log(formData)
-    let content =
-      formData.content === 'Custom Prompt'
-        ? formData.customPrompt
-        : formData.content
+    let content = formData.customPrompt
+
     console.log(content)
 
     const prompt = `
-    Create a detailed script for a ${formData.duration}-second video on the topic of an "${content}". 
+    Create a detailed script for a 40 second video on the topic of an "${content}". 
     The script should include:
     - A JSON response with two fields: 
       1. "imagePrompt" for detailed, ${formData.style} AI-generated image descriptions corresponding to each scene.
       2. "contentText" for the narrative content for each scene.
-    - Ensure the script has enough scenes to fully utilize the ${formData.duration} seconds, 
+    - Ensure the script has atleast 10 scenes to fully utilize the 40 seconds, 
       with a balanced pacing that fits the duration. 
     - Each scene should be concise yet informative, and the script should provide content 
       that ensures smooth transitions between scenes.
@@ -345,139 +341,111 @@ const CreateNew = () => {
   }
 
   return (
-    <div className="md:px-20 flex flex-col ml-9 gap-6">
-      <h2 className="font-bold text-4xl text-gray-50 text-center">
-        Create new
-      </h2>
-      <Card className="w-[500px] h-[616px]">
-        <CardHeader>
-          <CardTitle>Generate new video</CardTitle>
-          <CardDescription>
-            Generate your new AI short video in one click.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="grid w-full items-center gap-7">
-              {/* Content */}
-              <div className="flex flex-col space-y-4">
-                <Label
-                  htmlFor="content"
-                  className="text-2xl font-medium text-gray-100"
-                >
-                  Content
-                </Label>
-                <Select onValueChange={handleContentChange}>
-                  <SelectTrigger
-                    id="content"
-                    className="h-12 text-lg px-4 border rounded-lg"
+    <div className="flex flex-col lg:flex-row gap-10 px-5 md:px-20 py-10">
+      {/* Form Section */}
+      <div className="flex-1 bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 className="font-bold text-3xl md:text-4xl text-gray-50 text-center mb-6">
+          Create New Story
+        </h2>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Generate New Video</CardTitle>
+            <CardDescription>
+              Generate your new AI video in one click.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit}>
+              <div className="grid w-full items-center gap-7">
+                {/* Prompt */}
+                <div className="flex flex-col space-y-4">
+                  <Label
+                    htmlFor="content"
+                    className="text-xl md:text-2xl font-medium text-gray-100"
                   >
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper" className="text-lg">
-                    {contentOptions.map((item) => (
-                      <SelectItem
-                        key={item}
-                        value={item}
-                        className="py-3 px-4 hover:bg-gray-200 text-xl cursor-pointer"
-                      >
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formData.content === 'Custom Prompt' && (
+                    Prompt
+                  </Label>
                   <Textarea
                     placeholder="Type your Prompt..."
                     value={formData.customPrompt}
                     onChange={handleCustomPromptChange}
-                    className="mt-4 p-3 text-[18px]"
+                    className="mt-2 p-3 text-base md:text-lg"
                   />
-                )}
-              </div>
+                </div>
 
-              {/* Style */}
-              <div className="flex flex-col space-y-4">
-                <Label
-                  htmlFor="style"
-                  className="text-2xl font-medium text-gray-100"
-                >
-                  Style
-                </Label>
-                <Select onValueChange={handleStyleChange}>
-                  <SelectTrigger
-                    id="style"
-                    className="h-12 text-lg px-4 border rounded-lg"
+                {/* Style */}
+                <div className="flex flex-col space-y-4">
+                  <Label
+                    htmlFor="style"
+                    className="text-xl md:text-2xl font-medium text-gray-100"
                   >
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper" className="text-lg">
-                    {styleOptions.map((item) => (
-                      <SelectItem
-                        key={item}
-                        value={item}
-                        className="py-3 px-4 hover:bg-gray-200 text-xl cursor-pointer"
-                      >
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    Style
+                  </Label>
+                  <Select onValueChange={handleStyleChange}>
+                    <SelectTrigger
+                      id="style"
+                      className="h-12 text-base md:text-lg px-4 border rounded-lg"
+                    >
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent position="popper" className="text-lg">
+                      {styleOptions.map((item) => (
+                        <SelectItem
+                          key={item}
+                          value={item}
+                          className="py-3 px-4 hover:bg-gray-200 text-base md:text-lg cursor-pointer"
+                        >
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              {/* Duration */}
-              <div className="flex flex-col space-y-4">
-                <Label
-                  htmlFor="duration"
-                  className="text-2xl font-medium text-gray-100"
+              {/* Submit */}
+              <CardFooter className="flex justify-between mt-6">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-12 text-lg"
                 >
-                  Duration
-                </Label>
-                <Select onValueChange={handleDurationChange}>
-                  <SelectTrigger
-                    id="duration"
-                    className="h-12 text-lg px-4 border rounded-lg"
-                  >
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper" className="text-lg">
-                    <SelectItem
-                      value="10"
-                      className="py-3 px-4 hover:bg-gray-200 text-xl cursor-pointer"
-                    >
-                      10 Secs
-                    </SelectItem>
-                    <SelectItem
-                      value="30"
-                      className="py-3 px-4 hover:bg-gray-200 text-xl cursor-pointer"
-                    >
-                      30 Secs
-                    </SelectItem>
-                    <SelectItem
-                      value="60"
-                      className="py-3 px-4 hover:bg-gray-200 text-xl cursor-pointer"
-                    >
-                      60 Secs
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  {loading ? 'Generating...' : 'Generate'}
+                </Button>
+              </CardFooter>
+            </form>
+          </CardContent>
+        </Card>
 
-            {/* Submit */}
-            <CardFooter className="flex justify-between mt-6">
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Generating...' : 'Generate'}
-              </Button>
-            </CardFooter>
-          </form>
-        </CardContent>
-      </Card>
+        {/* Loading Component */}
+        {loading && <LoadingComponent loading={loading} />}
+        {playVideo && <PlayerDialog playVideo={playVideo} videoId={videoId} />}
+      </div>
 
-      {/* <Loader loadingStates={loadingStates} loading={loading} duration={2000} /> */}
-      {loading && <LoadingComponent loading={loading} />}
-
-      {playVideo && <PlayerDialog playVideo={playVideo} videoId={videoId} />}
+      {/* Documentation Section */}
+      <div className="flex-1 bg-gray-900 text-gray-50 p-6 rounded-lg shadow-lg flex flex-col justify-start items-start">
+        <h2 className="font-bold text-3xl md:text-4xl mb-4">How It Works</h2>
+        <p className="text-base md:text-lg leading-relaxed mb-4">
+          This AI-powered video generator creates a **60-second narrated story
+          video** with sliding images that match the transcription. Here's how
+          you can use it:
+        </p>
+        <ul className="list-disc pl-6 space-y-2 text-sm md:text-base">
+          <li>
+            Provide a **prompt** in the text box to describe your story or
+            theme.
+          </li>
+          <li>
+            Select a **style** from the dropdown to set the video’s tone and
+            visuals.
+          </li>
+          <li>Click **Generate** to create your video.</li>
+        </ul>
+        <p className="mt-4 text-base md:text-lg">
+          The tool will take care of generating the video by combining narration
+          and images seamlessly.
+        </p>
+      </div>
     </div>
   )
 }

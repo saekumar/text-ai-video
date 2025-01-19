@@ -81,16 +81,16 @@ const menuOptions = [
   },
   {
     id: 2,
-    name: 'Create Short',
+    name: 'Story Videos',
     path: '/dashboard/create-new',
     icon: FileVideo2Icon,
   },
-  // {
-  //   id: 4,
-  //   name: 'Create Video',
-  //   path: '/dashboard/video',
-  //   icon: Video,
-  // },
+  {
+    id: 4,
+    name: 'Flash Videos',
+    path: '/dashboard/video',
+    icon: Video,
+  },
 ]
 
 const SidebarComponent = (props) => {

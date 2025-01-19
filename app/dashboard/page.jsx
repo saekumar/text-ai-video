@@ -48,8 +48,8 @@ const DashboardPage = () => {
         <>
           <Tabs defaultValue="short" className="w-full mt-10">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="short">Short Videos</TabsTrigger>
-              <TabsTrigger value="fal">AI Videos</TabsTrigger>
+              <TabsTrigger value="short">Story Videos</TabsTrigger>
+              <TabsTrigger value="fal">Flash Videos</TabsTrigger>
             </TabsList>
             <TabsContent value="short">
               <VideoList videos={videoList} />
