@@ -21,7 +21,6 @@ const Footer = () => {
           <span className="mt-4 text-neutral-200 text-sm flex items-center">
             Made with{' '}
             <Heart className="w-3.5 h-3.5 mx-1 fill-primary text-primary" />
-            by SaiKumar
           </span>
         </div>
 

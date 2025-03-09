@@ -18,8 +18,8 @@ const NewsLetter = () => {
               <br /> Create videos faster than ever
             </h2>
             <p className="text-muted-foreground mt-6">
-              Engage your thoughts with SaeNius AI Powered, fully automated team
-              workflow.
+              Engage your thoughts with Video Generation AI Powered, fully
+              automated team workflow.
             </p>
 
             <Button variant={'white'} className="mt-6" asChild>

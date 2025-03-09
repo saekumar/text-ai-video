@@ -29,7 +29,7 @@ const Hero = () => {
                 height={24}
                 className="w-4 h-4"
               />
-              Introducing SaeNius AI
+              Introducing Video AI
               <ChevronRight className="w-4 h-4" />
             </span>
           </button>

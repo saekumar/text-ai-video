@@ -23,8 +23,8 @@ const Testimonials = () => {
             What people are saying
           </h2>
           <p className="text-muted-foreground mt-6">
-            Discover how SaeNius revolutionizes the user experience. Here&apos;s
-            what real people are saying online
+            Discover how Video Generation Ai revolutionizes the user experience.
+            Here&apos;s what real people are saying online
           </p>
         </div>
       </Container>

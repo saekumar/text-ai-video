@@ -110,7 +110,9 @@ const SidebarComponent = (props) => {
                   <Icons.logo className="w-8 h-8" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">SaeNius</span>
+                  <span className="truncate font-semibold">
+                    Ai Video Generation
+                  </span>
                 </div>
               </SidebarMenuButton>
             </SidebarMenuItem>
