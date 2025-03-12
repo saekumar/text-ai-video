@@ -5,8 +5,17 @@ import { uploadAudioToCloudinary } from '../../../lib/cloudinaryConfig'
 export async function POST(req) {
   try {
     const { script } = await req.json()
+
+    // Ensure script is provided
+    if (!script) {
+      return NextResponse.json({
+        status: 400,
+        message: 'Script text is required',
+      })
+    }
+
     let data = JSON.stringify({
-      voiceId: 'en-US-clint',
+      voiceId: 'en-US-natalie', // Ensure this is a valid voice ID from Murf AI
       style: 'Narration',
       text: script,
       rate: -8,
@@ -28,28 +37,36 @@ export async function POST(req) {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'api-key': 'ap2_280fa656-f0e9-474d-9afd-4083a1f76623', // Replace with environment variable for security
+        'api-key': process.env.MURF_AI_API_KEY, // Use environment variable
       },
       data: data,
     }
 
     const response = await axios(config)
-    // Log the actual response data
 
-    const audioUrl = response.data.audioFile // Assuming response contains the URL of the generated audio file
+    console.log('Murf AI Response:', response.data)
 
-    if (audioUrl) {
-      const cloudinaryAudioUrl = await uploadAudioToCloudinary(audioUrl)
-
-      return NextResponse.json({ status: 200, url: cloudinaryAudioUrl })
-    } else {
+    if (!response.data.audioFile) {
       return NextResponse.json({
         status: 404,
-        message: 'No audio file URL found',
+        message: 'No audio file URL found in response',
       })
     }
+
+    const cloudinaryAudioUrl = await uploadAudioToCloudinary(
+      response.data.audioFile
+    )
+
+    return NextResponse.json({ status: 200, url: cloudinaryAudioUrl })
   } catch (error) {
-    console.error('Error generating audio file:', error)
-    return NextResponse.json({ status: 500, message: 'Something went wrong' })
+    console.error(
+      'Error generating audio file:',
+      error.response?.data || error.message
+    )
+
+    return NextResponse.json({
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || 'Something went wrong',
+    })
   }
 }
